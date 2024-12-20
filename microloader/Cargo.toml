@@ -1,0 +1,6 @@
+[package]
+name = "susos"
+authors = ["javalsai <javalsai@proton.me"]
+version = "0.1.0"
+edition = "2021"
+publish = false
