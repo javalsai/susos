@@ -12,7 +12,7 @@ use core::{
     sync::atomic::{self, Ordering},
 };
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 fn _start() -> ! {
     for byte in b"Hello World!\n" {
         print_char(*byte);

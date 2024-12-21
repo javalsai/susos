@@ -1,5 +1,32 @@
+cargo-features = ["edition2024"]
+
 [workspace]
+resolver = "3"
 members = [
     "susos",
     "microloader",
 ]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+
+# wanna be able to compile in dev mode
+# but still fit microloader in the mbr aaaa
+# [profile.dev.package.microloader]
+# incremental = false
+# debug-assertions = false
+# overflow-checks = false
+# codegen-units = 1
+# opt-level = "z"
+# strip = "symbols"
+# debug = false
+
+[profile.release.package.microloader]
+codegen-units = 1
+opt-level = "z"

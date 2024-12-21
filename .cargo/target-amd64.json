@@ -10,17 +10,6 @@
   "executables": true,
   "linker-flavor": "ld.lld",
   "linker": "rust-lld",
-  "pre-link-args": {
-    "gcc": [
-      "-nostartfiles"
-    ],
-    "ld": [
-      "-nostdlib",
-      "--gc-sections",
-      "--static",
-      "--script=.cargo/linker-amd64.ld"
-    ]
-  },
   "panic-strategy": "abort",
   "disable-redzone": true,
   "features": "+soft-float,-sse,-mmx"

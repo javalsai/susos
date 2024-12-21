@@ -1,6 +1,9 @@
+cargo-features = ["edition2024"]
+
 [package]
-name = "microloader"
+name = "susos"
 authors = ["javalsai <javalsai@proton.me"]
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 publish = false
+build = "build.rs"

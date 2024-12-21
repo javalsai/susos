@@ -1,5 +1,4 @@
 #![allow(internal_features)]
-
 #![no_std]
 #![no_main]
 #![feature(lang_items)]
@@ -12,9 +11,11 @@ use core::{
     sync::atomic::{self, Ordering},
 };
 
-#[no_mangle]
+const STRING: &[u8] = b"Hello World!\r\n";
+
+#[unsafe(no_mangle)]
 fn _start() -> ! {
-    for byte in b"Hello World!\n" {
+    for byte in STRING {
         print_char(*byte);
     }
 
@@ -23,18 +24,15 @@ fn _start() -> ! {
 }
 
 #[inline(never)]
-#[no_mangle]
+#[unsafe(no_mangle)]
 fn print_char(ch: u8) {
     unsafe {
-        // rbx is in use by LLVM, so we cant use it...
-        // not sure how stable siding it to r9 is...
         asm!(
-            "mov r9, rbx",
+            "push bx",
             "mov bx, 0",
             "int 0x10",
-            "mov rbx, r9",
-            in("ax") (0x0e_u16 << 8) | ch as u16,
-            out("r9") _,
+            "pop bx",
+            in("ax") 0x0e00_u16 | ch as u16,
             // might get mangled, not sure tho
             // out("bl") _,
             // out("cx") _,
