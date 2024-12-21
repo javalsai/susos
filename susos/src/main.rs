@@ -3,6 +3,17 @@
 #![no_std]
 #![no_main]
 #![feature(lang_items)]
+
+#![reexport_test_harness_main = "test_main"]
+#![feature(custom_test_frameworks)]
+#![test_runner(test_runner)]
+
+pub fn test_runner(_test: &[&i32]) {
+    #[allow(clippy::empty_loop)]
+    loop {}
+}
+
+
 #[lang = "eh_personality"]
 extern "C" fn eh_personality() {}
 
@@ -28,12 +39,11 @@ fn print_char(ch: u8) {
         // rbx is in use by LLVM, so we cant use it...
         // not sure how stable siding it to r9 is...
         asm!(
-            "mov r9, rbx",
+            "push bx",
             "mov bx, 0",
             "int 0x10",
-            "mov rbx, r9",
-            in("ax") (0x0e_u16 << 8) | ch as u16,
-            out("r9") _,
+            "pop bx",
+            in("ax") 0x0e00_u16 | ch as u16,
             // might get mangled, not sure tho
             // out("bl") _,
             // out("cx") _,

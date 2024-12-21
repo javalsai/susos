@@ -2,6 +2,15 @@
 #![no_std]
 #![no_main]
 #![feature(lang_items)]
+#![reexport_test_harness_main = "test_main"]
+#![feature(custom_test_frameworks)]
+#![test_runner(test_runner)]
+
+pub fn test_runner(_test: &[&i32]) {
+    #[allow(clippy::empty_loop)]
+    loop {}
+}
+
 #[lang = "eh_personality"]
 extern "C" fn eh_personality() {}
 
@@ -11,11 +20,9 @@ use core::{
     sync::atomic::{self, Ordering},
 };
 
-const STRING: &[u8] = b"Hello World!\r\n";
-
 #[unsafe(no_mangle)]
 fn _start() -> ! {
-    for byte in STRING {
+    for byte in b"Hello World!\r\n" {
         print_char(*byte);
     }
 
@@ -23,16 +30,13 @@ fn _start() -> ! {
     loop {}
 }
 
-#[inline(never)]
-#[unsafe(no_mangle)]
 fn print_char(ch: u8) {
     unsafe {
         asm!(
-            "push bx",
             "mov bx, 0",
             "int 0x10",
-            "pop bx",
             in("ax") 0x0e00_u16 | ch as u16,
+            out("bx") _,
             // might get mangled, not sure tho
             // out("bl") _,
             // out("cx") _,
@@ -42,7 +46,6 @@ fn print_char(ch: u8) {
     }
 }
 
-#[inline(never)]
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     loop {
