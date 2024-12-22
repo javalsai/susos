@@ -6,6 +6,8 @@
 #![feature(custom_test_frameworks)]
 #![test_runner(test_runner)]
 
+pub mod bios;
+
 pub fn test_runner(_test: &[&i32]) {
     #[allow(clippy::empty_loop)]
     loop {}
@@ -15,35 +17,23 @@ pub fn test_runner(_test: &[&i32]) {
 extern "C" fn eh_personality() {}
 
 use core::{
-    arch::asm,
     panic::PanicInfo,
     sync::atomic::{self, Ordering},
 };
 
+const STRING: &[u8] = b"Hello World!";
+
 #[unsafe(no_mangle)]
 fn _start() -> ! {
-    for byte in b"Hello World!\r\n" {
-        print_char(*byte);
+    // (320x200, 256 colors)
+    bios::calls::video::set_video_mode(0x13);
+
+    for byte in STRING {
+        bios::calls::video::print_char(*byte, 0, 0xc);
     }
 
     #[allow(clippy::empty_loop)]
     loop {}
-}
-
-fn print_char(ch: u8) {
-    unsafe {
-        asm!(
-            "mov bx, 0",
-            "int 0x10",
-            in("ax") 0x0e00_u16 | ch as u16,
-            out("bx") _,
-            // might get mangled, not sure tho
-            // out("bl") _,
-            // out("cx") _,
-            // out("dx") _,
-            options(nomem, nostack),
-        );
-    }
 }
 
 #[panic_handler]
