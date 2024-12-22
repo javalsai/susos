@@ -2,7 +2,6 @@ OUTPUT_FORMAT("binary")
 ENTRY(_start)
 
 /* props to https://github.com/rust-osdev/bootloader/blob/main/bios/boot_sector/boot-sector-link.ld */
-/* this this seems highly debloatable (TODO) */
 SECTIONS {
     . = 0x500;
     _stack_start = .;
