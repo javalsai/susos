@@ -19,7 +19,8 @@ RELBINOUT=$(realpath -m --relative-to="$PWD" "$BINOUT")
 dd status=none if=/dev/zero of="$BINOUT" bs=1M count=64
 parted "$BINOUT" --script \
     mklabel msdos \
-    mkpart primary fat32 1MiB 100%
+    mkpart primary fat32 1MiB 100% \
+    set 1 boot on
 
 
 # some bold assumptions

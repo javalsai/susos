@@ -3,10 +3,14 @@ pub mod video {
 
     use core::arch::asm;
 
+    /// https://mendelson.org/wpdos/videomodes.txt
+    /// 0x0F = (640x480, 16  colors, High-Resolution Text)
+    /// 0x12 = (640x480, 16  colors)
+    /// 0x13 = (320x200, 256 colors)
     pub fn set_video_mode(mode: u8) {
         unsafe {
             asm!(
-                "int 0x10",
+                "int 10h",
                 in("ah") 0x00_u8,
                 in("al") mode,
             );
@@ -28,7 +32,7 @@ pub mod video {
     pub fn print_char(ch: u8, page_num: u8, color: &BiosColor) {
         unsafe {
             asm!(
-                "int 0x10",
+                "int 10h",
                 in("ah") 0x0e_u8,
                 in("al") ch,
                 in("bh") page_num,
